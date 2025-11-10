@@ -37,6 +37,7 @@ if (sendBtn) {
         body: JSON.stringify({ direction, entry, sl, rr, risk }),
       });
       const result = await response.json();
+const direction = result.entry < result.tp ? "BUY" : "SELL";
 
       const pipDiff = Math.abs(entry - sl);
       const lossYen = (100 * risk).toFixed(2);
@@ -46,7 +47,8 @@ if (sendBtn) {
       box.style.display = "block";
       box.innerHTML = `
         <h5>📊 損益計算プレビュー</h5>
-        <div>方向：${result.direction}</div>
+       <div>方向：${direction}</div>
+ 
         <div>エントリー：${result.entry.toFixed(3)}</div>
         <div>損切り：${result.sl.toFixed(3)}</div>
         <div>利確：${result.tp.toFixed(3)}</div>
