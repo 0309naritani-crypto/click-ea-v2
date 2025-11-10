@@ -16,35 +16,37 @@ def index():
 @app.post("/api/order/send-test")
 def send_test_order():
     data = request.get_json()
-    direction = data.get("direction", "BUY")
-    entry_price = float(data.get("entry", 0))
-    sl_price = float(data.get("sl", 0))
-    rr = float(data.get("rr", 1.3))
+
+    # フロントから送られたdirectionを使用
+    direction = data.get("direction", "")
+    entry = float(data.get("entry", 0))
+    sl = float(data.get("sl", 0))
+    rr = float(data.get("rr", 1))
     risk = float(data.get("risk", 1))
 
-    # 仮のロジック（本番ではOANDA計算に差し替え）
-    if direction.upper() == "BUY":
-        tp_price = entry_price + (entry_price - sl_price) * rr
+    # 利確を自動計算（BUY/SELLで分岐）
+    if direction == "BUY":
+        tp = entry + abs(entry - sl) * rr
     else:
-        tp_price = entry_price - (sl_price - entry_price) * rr
+        tp = entry - abs(entry - sl) * rr
 
-    lot = 1000
-    pip_diff = abs(entry_price - sl_price)
-    loss_yen = 100.00
-    profit_yen = 200.00
+    pip_diff = abs(entry - sl)
+    loss_yen = 100 * risk
+    profit_yen = loss_yen * rr
 
     return jsonify({
         "direction": direction,
-        "entry": entry_price,
-        "sl": sl_price,
-        "tp": tp_price,
+        "entry": entry,
+        "sl": sl,
+        "tp": tp,
         "pipDiff": pip_diff,
         "rr": rr,
         "risk": risk,
-        "units": lot,
+        "units": 1000,
         "lossYen": loss_yen,
         "profitYen": profit_yen
     })
+
 
 # ===============================
 # 全ポジションクローズ（テスト用）
