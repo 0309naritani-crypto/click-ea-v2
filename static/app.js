@@ -37,7 +37,8 @@ if (sendBtn) {
         body: JSON.stringify({ direction, entry, sl, rr, risk }),
       });
       const result = await response.json();
-const direction = result.entry < result.tp ? "BUY" : "SELL";
+const direction = result.tp > result.entry ? "BUY" : "SELL";
+
 
       const pipDiff = Math.abs(entry - sl);
       const lossYen = (100 * risk).toFixed(2);
