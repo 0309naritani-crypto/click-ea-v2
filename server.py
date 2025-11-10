@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, jsonify
-import os
 
 app = Flask(__name__)
 
@@ -13,49 +12,38 @@ def index():
 # ===============================
 # OANDA送信テスト
 # ===============================
-# ====================================
-# OANDA送信テスト
-# ====================================
 @app.post("/api/order/send-test")
 def send_test_order():
     data = request.get_json()
-    print("受信データ:", data)  # 👈 ← この1行追加
-
-    direction = data.get("direction", "")
-    entry = float(data.get("entry", 0))
-    sl = float(data.get("sl", 0))
-    rr = float(data.get("rr", 1))
+    direction = data.get("direction", "BUY")
+    entry_price = float(data.get("entry", 0))
+    sl_price = float(data.get("sl", 0))
+    rr = float(data.get("rr", 1.3))
     risk = float(data.get("risk", 1))
 
-
-    # ====== ② 利確値を計算（BUY/SELLで分岐） ======
-    if direction == "BUY":
-        tp = entry + abs(entry - sl) * rr
-    elif direction == "SELL":
-        tp = entry - abs(entry - sl) * rr
+    # 仮のロジック（本番ではOANDA計算に差し替え）
+    if direction.upper() == "BUY":
+        tp_price = entry_price + (entry_price - sl_price) * rr
     else:
-        tp = entry
+        tp_price = entry_price - (sl_price - entry_price) * rr
 
-    # ====== ③ pip差・損益を算出 ======
-    pip_diff = abs(entry - sl)
-    loss_yen = 100 * risk
-    profit_yen = loss_yen * rr
+    lot = 1000
+    pip_diff = abs(entry_price - sl_price)
+    loss_yen = 100.00
+    profit_yen = 200.00
 
-    # ====== ④ 結果を返す ======
     return jsonify({
         "direction": direction,
-        "entry": entry,
-        "sl": sl,
-        "tp": tp,
+        "entry": entry_price,
+        "sl": sl_price,
+        "tp": tp_price,
         "pipDiff": pip_diff,
         "rr": rr,
         "risk": risk,
-        "units": 1000,
+        "units": lot,
         "lossYen": loss_yen,
         "profitYen": profit_yen
     })
-
-
 
 # ===============================
 # 全ポジションクローズ（テスト用）
@@ -65,5 +53,4 @@ def close_all_positions():
     return jsonify({"closed": True})
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
-
+    app.run(debug=True, port=8000)
