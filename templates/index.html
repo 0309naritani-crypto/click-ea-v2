@@ -122,9 +122,12 @@
 
     // OANDA送信テスト
     document.getElementById("sendTestBtn").addEventListener("click", async () => {
-      const direction = "BUY"; // 仮固定（後でクリック連動予定）
-      const entry = parseFloat(document.getElementById("entry").value);
-      const sl = parseFloat(document.getElementById("sl").value);
+     const entry = parseFloat(document.getElementById("entry").value);
+const sl = parseFloat(document.getElementById("sl").value);
+
+// 方向を自動判定
+const direction = entry > sl ? "BUY" : "SELL";
+ 
       const rr = parseFloat(document.getElementById("rrInput").value);
       const risk = parseFloat(document.getElementById("riskInput").value);
 
