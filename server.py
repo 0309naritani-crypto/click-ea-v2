@@ -22,15 +22,27 @@ def send_test_order():
     risk = float(data.get("risk", 1))
 
     # 仮のロジック（本番ではOANDA計算に差し替え）
-    tp_price = entry_price + (entry_price - sl_price) * rr
+    if direction.upper() == "BUY":
+        tp_price = entry_price + (entry_price - sl_price) * rr
+    else:
+        tp_price = entry_price - (sl_price - entry_price) * rr
+
     lot = 1000
+    pip_diff = abs(entry_price - sl_price)
+    loss_yen = 100.00
+    profit_yen = 200.00
 
     return jsonify({
         "direction": direction,
         "entry": entry_price,
         "sl": sl_price,
         "tp": tp_price,
-        "units": lot
+        "pipDiff": pip_diff,
+        "rr": rr,
+        "risk": risk,
+        "units": lot,
+        "lossYen": loss_yen,
+        "profitYen": profit_yen
     })
 
 # ===============================
@@ -40,10 +52,5 @@ def send_test_order():
 def close_all_positions():
     return jsonify({"closed": True})
 
-import os
-
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
-
-
+    app.run(debug=True, port=8000)
