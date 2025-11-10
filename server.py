@@ -28,10 +28,21 @@ def send_test_order():
     else:
         tp_price = entry_price - (sl_price - entry_price) * rr
 
-    lot = 1000
+    # 損切り幅
     pip_diff = abs(entry_price - sl_price)
-    loss_yen = 100.00
-    profit_yen = 200.00
+
+    # 仮口座残高
+    account_balance = 100000  
+
+    # リスク金額（例：1% → 1000円）
+    risk_amount = account_balance * (risk / 100)
+
+    # ロット（仮計算）
+    lot = risk_amount / pip_diff  
+
+    # 損失金額と利益金額
+    loss_yen = risk_amount
+    profit_yen = risk_amount * rr
 
     return jsonify({
         "direction": direction,
@@ -45,6 +56,7 @@ def send_test_order():
         "lossYen": loss_yen,
         "profitYen": profit_yen
     })
+
 
 # ===============================
 # 全ポジションクローズ（テスト用）
