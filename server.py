@@ -13,27 +13,34 @@ def index():
 # ===============================
 # OANDA送信テスト
 # ===============================
+# ====================================
+# OANDA送信テスト
+# ====================================
 @app.post("/api/order/send-test")
 def send_test_order():
     data = request.get_json()
 
-    # フロントから送られたdirectionを使用
+    # ====== ① 入力値を取得 ======
     direction = data.get("direction", "")
     entry = float(data.get("entry", 0))
     sl = float(data.get("sl", 0))
     rr = float(data.get("rr", 1))
     risk = float(data.get("risk", 1))
 
-    # 利確を自動計算（BUY/SELLで分岐）
+    # ====== ② 利確値を計算（BUY/SELLで分岐） ======
     if direction == "BUY":
         tp = entry + abs(entry - sl) * rr
-    else:
+    elif direction == "SELL":
         tp = entry - abs(entry - sl) * rr
+    else:
+        tp = entry
 
+    # ====== ③ pip差・損益を算出 ======
     pip_diff = abs(entry - sl)
     loss_yen = 100 * risk
     profit_yen = loss_yen * rr
 
+    # ====== ④ 結果を返す ======
     return jsonify({
         "direction": direction,
         "entry": entry,
@@ -46,6 +53,7 @@ def send_test_order():
         "lossYen": loss_yen,
         "profitYen": profit_yen
     })
+
 
 
 # ===============================
