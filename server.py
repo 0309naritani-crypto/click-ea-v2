@@ -19,13 +19,14 @@ def index():
 @app.post("/api/order/send-test")
 def send_test_order():
     data = request.get_json()
+    print("受信データ:", data)  # 👈 ← この1行追加
 
-    # ====== ① 入力値を取得 ======
     direction = data.get("direction", "")
     entry = float(data.get("entry", 0))
     sl = float(data.get("sl", 0))
     rr = float(data.get("rr", 1))
     risk = float(data.get("risk", 1))
+
 
     # ====== ② 利確値を計算（BUY/SELLで分岐） ======
     if direction == "BUY":
