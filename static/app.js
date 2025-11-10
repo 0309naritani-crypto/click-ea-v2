@@ -24,46 +24,46 @@ if (riskRange && riskInput) {
 const sendBtn = document.getElementById("sendTestBtn");
 if (sendBtn) {
   sendBtn.addEventListener("click", async () => {
-    const direction = "BUY"; // 仮固定
-    const entry = parseFloat(document.getElementById("entry").value);
-    const sl = parseFloat(document.getElementById("sl").value);
-    const rr = parseFloat(document.getElementById("rrInput").value);
-    const risk = parseFloat(document.getElementById("riskInput").value);
+  const entry = parseFloat(document.getElementById("entry").value);
+  const sl = parseFloat(document.getElementById("sl").value);
+  const rr = parseFloat(document.getElementById("rrInput").value);
+  const risk = parseFloat(document.getElementById("riskInput").value);
 
-    try {
-      const response = await fetch("/api/order/send-test", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ direction, entry, sl, rr, risk }),
-      });
-      const result = await response.json();
-const direction = result.tp > result.entry ? "BUY" : "SELL";
+  // ★ BUY/SELLの方向判定をここで実施
+  const direction = sl < entry ? "BUY" : "SELL";
 
+  try {
+    const response = await fetch("/api/order/send-test", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ direction, entry, sl, rr, risk }),
+    });
 
-      const pipDiff = Math.abs(entry - sl);
-      const lossYen = (100 * risk).toFixed(2);
-      const profitYen = (lossYen * rr).toFixed(2);
+    const result = await response.json();
 
-      const box = document.getElementById("resultBox");
-      box.style.display = "block";
-      box.innerHTML = `
-        <h5>📊 損益計算プレビュー</h5>
-       <div>方向：${direction}</div>
- 
-        <div>エントリー：${result.entry.toFixed(3)}</div>
-        <div>損切り：${result.sl.toFixed(3)}</div>
-        <div>利確：${result.tp.toFixed(3)}</div>
-        <div>損失幅：${pipDiff.toFixed(3)} pips</div>
-        <div>RR：${rr}</div>
-        <div>リスク割合：${risk}%</div>
-        <div>ロット数：${result.units}</div>
-        <div class="mt-2">損失金額：${lossYen} 円</div>
-        <div>利益金額：${profitYen} 円</div>
-      `;
-    } catch (error) {
-      alert("通信エラーが発生しました: " + error.message);
-    }
-  });
+    const pipDiff = Math.abs(entry - sl);
+    const lossYen = (100 * risk).toFixed(2);
+    const profitYen = (lossYen * rr).toFixed(2);
+
+    const box = document.getElementById("resultBox");
+    box.style.display = "block";
+    box.innerHTML = `
+      <h5>📊 損益計算プレビュー</h5>
+      <div>方向：${direction}</div>
+      <div>エントリー：${entry.toFixed(3)}</div>
+      <div>損切り：${sl.toFixed(3)}</div>
+      <div>利確：${result.tp.toFixed(3)} pips/div>
+      <div>RR：${rr}</div>
+      <div>リスク割合：${risk}%</div>
+      <div>ロット数：${result.units}</div>
+      <div class="mt-2">損失金額：${lossYen}円</div>
+      <div>利益金額：${profitYen}円</div>
+    `;
+  } catch (error) {
+    console.error(error);
+  }
+});
+
 }
 
 // 全決済ボタン
