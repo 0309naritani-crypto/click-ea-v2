@@ -1,0 +1,27 @@
+body {
+  background-color: #f8f9fa;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.card {
+  border-radius: 1rem;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  background-color: white;
+}
+
+.btn-custom {
+  font-size: 1rem;
+  padding: 0.8rem;
+  border-radius: 10px;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+#resultBox {
+  display: none;
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
